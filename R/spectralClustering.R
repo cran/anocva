@@ -7,41 +7,50 @@
 #'
 #' @return Cluster labels
 #'
+#' @references
+#' Von Luxburg, U (2007) A tutorial on spectral clustering. Statistics and computing 17:395–416.
+#'
+#' Ng A, Jordan M, Weiss Y (2002) On spectral clustering: analysis and an algorithm. In: Advances
+#' in Neural Information Processing Systems. Dietterich T, Becker S, Ghahramani Z (Eds.),
+#' vol. 14. MIT Press, (pp. 849–856).
+#'
 #' @import cluster
 #'
 #' @examples
-#' #install igraph if necessary
-#' #install.packages('igraph')
-#' #install.packages('cluster')
+#' # Install igraph if necessary
+#' # install.packages('igraph')
+#' # install.packages('cluster')
 #'
-#' library(igraph)
-#' library(cluster)
 #' library(anocva)
 #'
 #' set.seed(2000)
 #'
-#' #Create a tree graph
-#' treeGraph = make_tree(80, children = 4, mode = "undirected")
+#' if (requireNamespace("igraph", quietly = TRUE)) {
 #'
-#' #Visualize the tree graph
-#' plot(treeGraph, vertex.size=10, vertex.label=NA)
+#'   # Create a tree graph
+#'   treeGraph = igraph::make_tree(80, children = 4, mode = "undirected")
 #'
-#' #Get the adjacency matrix of the tree graph
-#' adj = as.matrix(get.adjacency(treeGraph))
+#'   # Visualize the tree graph
+#'   plot(treeGraph, vertex.size = 10, vertex.label = NA)
 #'
-#' #Cluster the tree graph in to four clusters
-#' cluster = spectralClustering(adj, 4)
+#'   # Get the adjacency matrix of the tree graph
+#'   adj = as.matrix(igraph::get.adjacency(treeGraph))
 #'
-#' #See the result clustering
-#' plot(treeGraph, vertex.size=10, vertex.color = cluster, vertex.label=NA)
+#'   # Cluster the tree graph in to four clusters
+#'   cluster = spectralClustering(adj, 4)
+#'
+#'   # See the result clustering
+#'   plot(treeGraph, vertex.size=10, vertex.color = cluster, vertex.label = NA)
+#' }
 #'
 #' @export
-spectralClustering <- function(W, k){
-  n <- ncol(W)
+#'
+spectralClustering = function(W, k){
+  n = ncol(W)
   S = rowSums(W)
   D = diag(S)
-  L <- D - W
-  U <- (eigen(L)$vectors)[ , ((n-k+1):n)]
-  C <- pam(x = U, k = k)
+  L = D - W
+  U = (eigen(L)$vectors)[ , ((n-k+1):n)]
+  C = pam(x = U, k = k)
   return(C$clustering)
 }

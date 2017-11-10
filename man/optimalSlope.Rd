@@ -21,5 +21,8 @@ The optimal number of clusters.
 Estimates the optimal number of clusters using the Slope criterion when silhouette statistics already exists.
 The optimal number of clusters will be verified in the range {2,..., maxClust}.
 }
+\references{
+Fujita A, Takahashi DY, Patriota AG (2014b) A non-parametric method to
+estimate the number of clusters. Computational Statistics & Data Analysis 73:27–39
+}
 \keyword{internal}
-

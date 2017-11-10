@@ -18,4 +18,3 @@ Verifies if a clustering function is set. If not,
 uses the spectral clustering as default clustering method.
 }
 \keyword{internal}
-

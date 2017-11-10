@@ -27,5 +27,12 @@ ANOCVA deltaS and deltaSq statistics
 \description{
 Calculates ANOVA statistics for original data and bootstrap replicates.
 }
-\keyword{internal}
+\references{
+Fujita A, Takahashi DY, Patriota AG, Sato JR (2014a) A non-parametric statistical test to
+compare clusters with applications in functional magnetic resonance imaging data. Statistics
+in Medicine 33: 4949–4962
 
+Caetano de Jesus DA. (2017) Evaluation of ANOCVA test for cluster comparison through simulations.
+Master Dissertation. Institute of Mathematics and Statistics, University of São Paulo.
+}
+\keyword{internal}

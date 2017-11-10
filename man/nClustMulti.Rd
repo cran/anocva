@@ -26,9 +26,9 @@ Estimates the optimal number of clusters for multiple samples using either Slope
 verified in the range {2,..., maxClust}. Takes the mean of all samples in order to perform the estimation.
 }
 \examples{
-#Install packages if necessary
-#install.packages('MASS')
-#install.packages('cluster')
+# Install packages if necessary
+# install.packages('MASS')
+# install.packages('cluster')
 
 library(anocva)
 library(MASS)
@@ -36,35 +36,40 @@ library(cluster)
 
 set.seed(5000)
 
-#A k-means function that returns cluster labels directly.
-myKmeans <- function(dist, k){
+# A k-means function that returns cluster labels directly.
+myKmeans = function(dist, k){
   return(kmeans(dist, k, iter.max = 50, nstart = 5)$cluster)
 }
 
-#Size of the population
-npop = 25
-#Number of subjects in each group of each population
-nsub = 60
+# Number of subjects in each population
+nsub = 25
+# Number of items in each subject
+nitem = 60
 
-#Generate simulated data
-data = array(NA, c(npop, nsub*2, 2))
-data.dist = array(NA, c(npop, nsub*2, nsub*2))
+# Generate simulated data
+data = array(NA, c(nsub, nitem*2, 2))
+data.dist = array(NA, c(nsub, nitem*2, nitem*2))
 meanx = 2
 delta = 0.5
 # Covariance matrix
-sigma <- matrix(c(0.03, 0, 0, 0.03), 2)
-for (i in seq(npop)){
-  sub = rbind(mvrnorm(nsub, mu = c(0, 0), Sigma = sigma ),
-              mvrnorm(nsub, mu = c(meanx,0), Sigma = sigma))
+sigma = matrix(c(0.03, 0, 0, 0.03), 2)
+for (i in seq(nsub)){
+  sub = rbind(mvrnorm(nitem, mu = c(0, 0), Sigma = sigma ),
+              mvrnorm(nitem, mu = c(meanx,0), Sigma = sigma))
   data[i,,] = sub
   data.dist[i,,] = as.matrix(dist(data[i,,]))
 }
 
-#Estimate the optimal number of clusters
+# Estimate the optimal number of clusters
 r = nClustMulti(dataDist = data.dist, p = 1, maxClust = 20,
                 clusteringFunction = myKmeans, criterion = "slope")
 sprintf("The optimal number of clusters found was \%d.", r)
 
-
 }
+\references{
+Fujita A, Takahashi DY, Patriota AG (2014b) A non-parametric method to
+estimate the number of clusters. Computational Statistics & Data Analysis 73:27–39
 
+Rousseeuw PJ (1987) Sihouettes: a graphical aid to the interpretation and validation of cluster
+analysis. Journal of Computational and Applied Mathematics 20:53–65
+}

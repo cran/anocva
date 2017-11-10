@@ -15,5 +15,8 @@ The optimal number of clusters.
 \description{
 Estimates the optimal number of clusters using the Silhouette criterion when silhouette statistics already exists.
 }
+\references{
+Rousseeuw PJ (1987) Sihouettes: a graphical aid to the interpretation and validation of cluster
+analysis. Journal of Computational and Applied Mathematics 20:53–65
+}
 \keyword{internal}
-

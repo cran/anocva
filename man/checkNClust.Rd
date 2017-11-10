@@ -24,4 +24,3 @@ checkNClust(dataDist, r = NULL, p = 1, maxClust = 20, clusteringFunction,
 If the number of clusters has not been set, estimates it by using Slope criterion in the range {2, 20}.
 }
 \keyword{internal}
-

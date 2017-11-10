@@ -26,4 +26,3 @@ simuData = checkRange01(simuData)
 sprintf("Now the minimum value is \%.2f and the maximum is \%.2f.", min(simuData), max(simuData))
 
 }
-

@@ -10,14 +10,21 @@
 #'
 #' @return ANOCVA deltaS and deltaSq statistics
 #'
+#' @references
+#' Fujita A, Takahashi DY, Patriota AG, Sato JR (2014a) A non-parametric statistical test to
+#' compare clusters with applications in functional magnetic resonance imaging data. Statistics
+#' in Medicine 33: 4949–4962
+#'
+#' Caetano de Jesus DA. (2017) Evaluation of ANOCVA test for cluster comparison through simulations.
+#' Master Dissertation. Institute of Mathematics and Statistics, University of São Paulo.
+#'
 #' @keywords internal
 #'
-anocvaStats <-function(idx, dataDist, id, k, N, r, clusteringFunction){
+anocvaStats =function(idx, dataDist, id, k, N, r, clusteringFunction){
 
   Ab = array(0, c(k, N, N))
   Abb = array(0, c(N, N))
   Sj = array(0, c(k, N))
-  Sjm = array(0, N)
   S = array(0, N)
 
   for (j in seq(k)){
@@ -37,18 +44,13 @@ anocvaStats <-function(idx, dataDist, id, k, N, r, clusteringFunction){
   labels = clusteringFunction(1 - Abb, r)
   S = silhouette(labels, dmatrix = Abb)[, 3]
 
+  deltaS = 0
+  deltaSq = array(0, N)
   for (j in seq(k)){
     Sj[j, ] = silhouette(labels, dmatrix = Ab[j, , ])[, 3]
-    Sjm = Sjm + Sj[j, ]
-  }
-  Sjm = Sjm / k
-
-  deltaS = 0
-  for (j in seq(k)){
     deltaS = deltaS + ((S - Sj[j, ]) %*% (S - Sj[j, ]))
+    deltaSq = deltaSq + ((S - Sj[j, ]) ^ 2)
   }
-
-  deltaSq = ( S - Sjm) ^ 2
 
   return(list("deltaS" = deltaS, "deltaSq" = deltaSq))
 }

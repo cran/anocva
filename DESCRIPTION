@@ -2,7 +2,7 @@ Package: anocva
 Type: Package
 Title: A Non-Parametric Statistical Test to Compare Clustering
         Structures
-Version: 0.1.0
+Version: 0.1.1
 Author: Maciel C. Vidal [aut, cre], Andre Fujita [aut]
 Maintainer: Maciel C. Vidal <calebe@ime.usp.br>
 Description: Provides ANOCVA (ANalysis Of Cluster VAriability), a non-parametric statistical test
@@ -17,6 +17,6 @@ NeedsCompilation: no
 Imports: cluster
 Suggests: MASS, igraph
 Repository: CRAN
-RoxygenNote: 5.0.1
-Packaged: 2016-12-28 05:14:16 UTC; calebe
-Date/Publication: 2016-12-28 17:01:02
+RoxygenNote: 6.0.1
+Packaged: 2017-11-10 01:54:35 UTC; calebe
+Date/Publication: 2017-11-10 04:27:50 UTC

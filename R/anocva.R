@@ -9,7 +9,7 @@
 #'
 #' @keywords internal
 #'
-checkNClust <- function(dataDist, r = NULL, p = 1, maxClust = 20, clusteringFunction, criterion = c("slope", "silhouette")){
+checkNClust = function(dataDist, r = NULL, p = 1, maxClust = 20, clusteringFunction, criterion = c("slope", "silhouette")){
   if(is.null(r)){
     optimalN = nClustMulti(dataDist = dataDist, p = p, maxClust = maxClust, clusteringFunction = clusteringFunction, criterion = criterion)
     return(optimalN)
@@ -37,7 +37,7 @@ checkNClust <- function(dataDist, r = NULL, p = 1, maxClust = 20, clusteringFunc
 #'
 #' @export
 #'
-checkRange01 <- function(data){
+checkRange01 = function(data){
   if (min(data) < 0 || max(data) > 1){
     normalized = (data - min(data)) / (max(data) - min(data))
     return(normalized)
@@ -54,7 +54,7 @@ checkRange01 <- function(data){
 #'
 #' @keywords internal
 #'
-checkClusteringFunction <- function(clusteringFunction){
+checkClusteringFunction = function(clusteringFunction){
   if(is.null(clusteringFunction)){
     #uses spectral clustering as default clustering function
     return(spectralClustering)
@@ -65,6 +65,8 @@ checkClusteringFunction <- function(clusteringFunction){
 #' ANalysis Of Cluster VAriability
 #'
 #' The ANOCVA (ANalysis Of Cluster VAriability) is a non-parametric statistical test to compare clusters with applications in functional magnetic resonance imaging data. The ANOCVA allows us to compare the clustering structure of multiple groups simultaneously and also to identify features that contribute to the differential clustering.
+#'
+#' The test statistic used is the one proposed by Caetano de Jesus (2017).
 #'
 #' @param dataDist A matrix with multiple matrices of dissimilarites. Given that a subject with N items (e.g. ROIs)
 #'        has a matrix of dissimilarities of size NxN, the dataDist matrix should contain the dissimilarity matrix of
@@ -80,13 +82,25 @@ checkClusteringFunction <- function(clusteringFunction){
 #'
 #' @return ANOCVA p-values
 #'
+#' @references
+#' Fujita A, Takahashi DY, Patriota AG, Sato JR (2014a) A non-parametric statistical test to
+#' compare clusters with applications in functional magnetic resonance imaging data. Statistics
+#' in Medicine 33: 4949–4962
+#'
+#' Vidal MC, Sato JR, Balardin JB, Takahashi DY, Fujita A (2017) ANOCVA in R: a software to
+#' compare clusters between groups and its application to the study of autism spectrum disorder.
+#' Frontiers in Neuroscience 11:1–8
+#'
+#' Caetano de Jesus DA. (2017) Evaluation of ANOCVA test for cluster comparison through simulations.
+#' Master Dissertation. Institute of Mathematics and Statistics, University of São Paulo.
+#'
 #' @import cluster
 #'
 #' @examples
 #'
-#' #Install packages if necessary
-#' #install.packages('MASS')
-#' #install.packages('cluster')
+#' # Install packages if necessary
+#' # install.packages('MASS')
+#' # install.packages('cluster')
 #'
 #' library(anocva)
 #' library(MASS)
@@ -94,85 +108,86 @@ checkClusteringFunction <- function(clusteringFunction){
 #'
 #' set.seed(5000)
 #'
-#' #A k-means function that returns cluster labels directly.
-#' myKmeans <- function(dist, k){
+#' # Defines a k-means function that returns cluster labels directly
+#' myKmeans = function(dist, k){
 #'   return(kmeans(dist, k, iter.max = 50, nstart = 5)$cluster)
 #' }
 #'
-#' #Size of each population
-#' npop = 20
-#' #Number of subjects in each group of each population
-#' nsub = 30
+#' # Number of subjects in each population
+#' nsub = 20
+#' # Number of items in each subject
+#' nitem = 30
 #'
-#' #Generate simulated data
-#' data = array(NA, c(npop*2, nsub*2, 2))
-#' data.dist = array(NA, c(npop*2, nsub*2, nsub*2))
+#' # Generate simulated data
+#' data = array(NA, c(nsub*2, nitem*2, 2))
+#' dataDist = array(NA, c(nsub*2, nitem*2, nitem*2))
 #' meanx = 2
 #' delta = 0.5
 #' # Covariance matrix
-#' sigma <- matrix(c(0.03, 0, 0, 0.03), 2)
-#' for (i in seq(npop*2)){
-#'   sub = rbind(mvrnorm(nsub, mu = c(0, 0), Sigma = sigma ),
-#'               mvrnorm(nsub, mu = c(meanx,0), Sigma = sigma))
+#' sigma = matrix(c(0.03, 0, 0, 0.03), 2)
+#' for (i in seq(nsub*2)){
+#'   sub = rbind(mvrnorm(nitem, mu = c(0, 0), Sigma = sigma ),
+#'               mvrnorm(nitem, mu = c(meanx,0), Sigma = sigma))
 #'   data[i,,] = sub
-#'   #If it's a sample of population 2.
-#'   if (i > npop){
+#'   # If it's a sample of population 2.
+#'   if (i > nsub){
 #'     data[i,10,1] = data[i,10,1] + delta
 #'   }
-#'   #euclidian distance
-#'   data.dist[i,,] = as.matrix(dist(data[i,,]))
+#'   # Euclidian distance
+#'   dataDist[i,,] = as.matrix(dist(data[i,,]))
 #' }
 #'
-#' #Population 1 subject
+#' # Population 1 subject
 #' plot(data[5,,], asp = 1, xlab = '', ylab = '', main = 'Population 1 - subject example')
 #'
-#' #Population 2 subject
+#' # Population 2 subject
 #' plot(data[35,,], asp = 1, xlab = '', ylab = '', main = 'Population 2 - subject example')
 #'
-#' #The first 10 subjects belong to population 1 while the next 10 subjects belong to population 2
-#' id = c(rep(1, npop), rep(2, npop))
+#' # The first nsub subjects belong to population 1 while the next nsub subjects belong to population 2
+#' id = c(rep(1, nsub), rep(2, nsub))
 #'
 #' \dontrun{
-#' #ANOCVA call with different clustering function (myKmeans) and inside estimation of
-#' #the number of clusters (r)
-#' res1 = anocva(data.dist, id, replicates=500, r = NULL,
+#' # ANOCVA call with different clustering function (myKmeans) and inside estimation of
+#' # the number of clusters (r)
+#' res1 = anocva(dataDist, id, replicates=500, r = NULL,
 #'               clusteringFunction = myKmeans,
 #'               p = 1, criterion = "slope")
 #' }
 #'
-#' #Estimate the number of clusters previously by using Spectral Clustering and Slope criterion
-#' r = nClustMulti(data.dist, clusteringFunction = spectralClustering, criterion = 'slope')
+#' # Estimate the number of clusters previously by using Spectral Clustering and Slope criterion
+#' r = nClustMulti(dataDist, clusteringFunction = spectralClustering, criterion = 'slope')
 #'
-#' #Calls ANOCVA statistical test
-#' res = anocva(data.dist, id, replicates=500, r = r,
+#' # Calls ANOCVA statistical test
+#' res = anocva(dataDist, id, replicates=500, r = r,
 #'              clusteringFunction = spectralClustering,
 #'              p = 1, criterion = "slope")
 #'
-#' #DeltaS p-value
+#' # DeltaS p-value
 #' res$pValueDeltaS
 #'
-#' #DeltaSq p-values
+#' # DeltaSq p-values
 #' res$pValueDeltaSq
 #'
-#' #Identifies which items have significant p-values with a significance level of 0.05.
+#' # Identifies which items have significant p-values with a significance level of 0.05.
 #' which(res$pValueDeltaSq < 0.05)
 #'
-#' #Identifies which items have significant FDR adjusted p-values (q-values)
-#' #with a significance level of 0.05.
+#' # Identifies which items have significant FDR adjusted p-values (q-values)
+#' # with a significance level of 0.05.
 #' qValue = p.adjust(res$pValueDeltaSq, "fdr")
 #' which(qValue < 0.05)
 #'
 #' @export
 #'
-anocva <- function(dataDist, id, replicates = 1000, r=NULL, clusteringFunction = NULL, p = 1, maxClust = 20, criterion = c("slope", "silhouette"), showElapTime = TRUE){
+anocva = function(dataDist, id, replicates = 1000, r=NULL, clusteringFunction = NULL, p = 1, maxClust = 20, criterion = c("slope", "silhouette"), showElapTime = TRUE){
   startTime = proc.time()
 
   N = dim(dataDist)[2]
   k = max(id)
 
   dataDist = checkRange01(dataDist)
-  clusteringFunction <- checkClusteringFunction(clusteringFunction)
-  r <- checkNClust(dataDist, r = r, p = p, maxClust = maxClust, clusteringFunction = clusteringFunction, criterion = criterion)
+  clusteringFunction = checkClusteringFunction(clusteringFunction)
+  r = checkNClust(dataDist, r = r, p = p, maxClust = maxClust, clusteringFunction = clusteringFunction,
+                   criterion = criterion)
 
   boot = sapply(1:(replicates + 1), function(x) anocvaStats(x, dataDist, id, k, N, r, clusteringFunction))
   mDeltaSq = matrix(unlist(boot[2,]), ncol = N, byrow = TRUE)
